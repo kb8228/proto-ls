@@ -1,4 +1,4 @@
-import { Config } from '../Config';
+import { Config } from './Config';
 import fm from './lib/Libraries/fm.liveswitch.js'
 
 export class HelloWorldLogic {
