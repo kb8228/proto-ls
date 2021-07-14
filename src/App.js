@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import './App.css';
 import { HelloWorldLogic } from './HelloWorldLogic';
 
@@ -35,21 +36,22 @@ function App() {
   };
 
   // const joinBtn = document.getElementById("join-btn");
-  // const leaveBtn = document.getElementById("leave-btn");
+  const leaveBtn = document.getElementById("leave-btn");
+  const [joined, setJoined] = useState(false);
 
-  // joinBtn.onclick = () => {
-  //   // <Start Local Media>
-  //   //app.startLocalMedia().then(() => {
-  //   // </Start Local Media>
-  //   loadInputs(); // Create and register the client.
+  const handleJoinClick = () => {
+    // <Start Local Media>
+    //app.startLocalMedia().then(() => {
+    // </Start Local Media>
+    loadInputs(); // Create and register the client.
 
-  //   app.joinAsync().then(() => {
-  //     joinBtn.style.display = "none";
-  //     leaveBtn.style.display = "inline-block";
-  //   }); // <Start Local Media>
-  //   //});
-  //   // </Start Local Media>
-  // };
+    app.joinAsync().then(() => {
+      setJoined(true)
+      // leaveBtn.style.display = "inline-block";
+    }); // <Start Local Media>
+    //});
+    // </Start Local Media>
+  };
 
   // leaveBtn.onclick = () => {// <Stop Local Media>
     //app.stopLocalMedia().then(() => {
@@ -146,8 +148,9 @@ function App() {
   // <Mute Streams>
 
 
-  // function loadInputs() {// <Change Devices>
-    //app.getAudioInputs().then(audioInputs => {
+  function loadInputs() {// <Change Devices>
+    console.log("APP", app)
+    // app.getAudioInputs().then(audioInputs => {
     //    const selectBox: HTMLSelectElement = document.getElementById("audioInputs") as HTMLSelectElement;
     //    for (const input of audioInputs) {
     //        const option: HTMLOptionElement = document.createElement("option");
@@ -155,8 +158,8 @@ function App() {
     //        selectBox.add(option);
     //    }
     //    selectBox.onchange = () => app.setAudioInput(audioInputs[selectBox.selectedIndex]);
-    //});
-    //app.getVideoInputs().then(videoInputs => {
+    // });
+    // app.getVideoInputs().then(videoInputs => {
     //    const selectBox: HTMLSelectElement = document.getElementById("videoInputs") as HTMLSelectElement;
     //    for (const input of videoInputs) {
     //        const option: HTMLOptionElement = document.createElement("option");
@@ -164,8 +167,8 @@ function App() {
     //        selectBox.add(option);
     //    }
     //    selectBox.onchange = () => app.setVideoInput(videoInputs[selectBox.selectedIndex]);
-    //});
-    //app.getAudioOutputs().then(audioOutputs => {
+    // });
+    // app.getAudioOutputs().then(audioOutputs => {
     //    const selectBox: HTMLSelectElement = document.getElementById("audioOutputs") as HTMLSelectElement;
     //    for (const output of audioOutputs) {
     //        const option: HTMLOptionElement = document.createElement("option");
@@ -173,9 +176,9 @@ function App() {
     //        selectBox.add(option);
     //    }
     //    selectBox.onchange = () => app.setAudioOutput(audioOutputs[selectBox.selectedIndex]);
-    //});
+    // });
     // </Change Devices>
-  // }
+  }
 
   // function clearInputs() {// // Remove the lists of available devices
   //   // removeOptions(document.getElementById("audioInputs")
@@ -190,6 +193,8 @@ function App() {
   //     selectElement.remove(i);
   //   }
   // }
+  const joinBtnDisplay = joined ? "none" : "inline-block";
+  const leaveBtnDisplay = joined ? "inline-block" : "none";
 
   return (
     <div className="App">
@@ -215,8 +220,8 @@ function App() {
           <button type="button" id="disable-remote-video-btn" style={{ margin: "2px" }}>Disable Remote Video</button>
         </div>
         <div style={{ marginLeft: "50%" }}>
-          <button type="button" id="join-btn" style={{ margin: "2px" }}>Join</button>
-          <button type="button" id="leave-btn" style={{ margin: "2px", display: "none" }}>Leave</button>
+          <button type="button" id="join-btn" style={{ margin: "2px", display: joinBtnDisplay }} onClick={handleJoinClick}>Join</button>
+          <button type="button" id="leave-btn" style={{ margin: "2px", display: leaveBtnDisplay }}>Leave</button>
           <button type="button" id="broadcast-btn" style={{ margin: "2px" }}>Broadcast</button>
           <button type="button" id="receive-btn" style={{ margin: "2px" }}>Receive</button>
           <br />
