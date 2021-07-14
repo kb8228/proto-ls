@@ -46,27 +46,27 @@ function App() {
     loadInputs(); // Create and register the client.
 
     app.joinAsync().then(() => {
-      setJoined(true)
-      // leaveBtn.style.display = "inline-block";
+      setJoined(true);
     }); // <Start Local Media>
     //});
     // </Start Local Media>
   };
 
-  // leaveBtn.onclick = () => {// <Stop Local Media>
-    //app.stopLocalMedia().then(() => {
+  const handleLeaveClick = () => {// <Stop Local Media>
+    // app.stopLocalMedia().then(() => {
     // </Stop Local Media>
     // <Unregister>             
-    //app.leaveAsync().then(() => {
-    //    clearInputs();
-    //    joinBtn.style.display = "inline-block";
-    //    leaveBtn.style.display = "none";
-    //});
+    app.leaveAsync().then(() => {
+      clearInputs();
+      setJoined(false);
+    });
     // </Unregister>
     // <Stop Local Media>
     //});
     // </Stop Local Media>
-  // }; // <Share Screen>
+  };
+  
+  // <Share Screen>
   //const screenShareToggleBtn: HTMLButtonElement = document.getElementById("screenshare-toggle-btn") as HTMLButtonElement;
   //screenShareToggleBtn.onclick = () => app.toggleScreenSharing();
   //app.localScreenMedia.addOnVideoStarted(() => {
@@ -149,29 +149,28 @@ function App() {
 
 
   function loadInputs() {// <Change Devices>
-    console.log("APP", app)
     // app.getAudioInputs().then(audioInputs => {
-    //    const selectBox: HTMLSelectElement = document.getElementById("audioInputs") as HTMLSelectElement;
+    //    const selectBox = document.getElementById("audioInputs");
     //    for (const input of audioInputs) {
-    //        const option: HTMLOptionElement = document.createElement("option");
+    //        const option = document.createElement("option");
     //        option.text = input.getName();
     //        selectBox.add(option);
     //    }
     //    selectBox.onchange = () => app.setAudioInput(audioInputs[selectBox.selectedIndex]);
     // });
     // app.getVideoInputs().then(videoInputs => {
-    //    const selectBox: HTMLSelectElement = document.getElementById("videoInputs") as HTMLSelectElement;
+    //    const selectBox = document.getElementById("videoInputs");
     //    for (const input of videoInputs) {
-    //        const option: HTMLOptionElement = document.createElement("option");
+    //        const option = document.createElement("option");
     //        option.text = input.getName();
     //        selectBox.add(option);
     //    }
     //    selectBox.onchange = () => app.setVideoInput(videoInputs[selectBox.selectedIndex]);
     // });
     // app.getAudioOutputs().then(audioOutputs => {
-    //    const selectBox: HTMLSelectElement = document.getElementById("audioOutputs") as HTMLSelectElement;
+    //    const selectBox = document.getElementById("audioOutputs");
     //    for (const output of audioOutputs) {
-    //        const option: HTMLOptionElement = document.createElement("option");
+    //        const option = document.createElement("option");
     //        option.text = output.getName();
     //        selectBox.add(option);
     //    }
@@ -180,7 +179,7 @@ function App() {
     // </Change Devices>
   }
 
-  // function clearInputs() {// // Remove the lists of available devices
+  function clearInputs() {// // Remove the lists of available devices
   //   // removeOptions(document.getElementById("audioInputs")
   //   // removeOptions(document.getElementById("videoInputs")
   //   // removeOptions(document.getElementById("audioOutputs")
@@ -192,7 +191,8 @@ function App() {
   //   for (let i = length; i >= 0; i--) {
   //     selectElement.remove(i);
   //   }
-  // }
+  }
+
   const joinBtnDisplay = joined ? "none" : "inline-block";
   const leaveBtnDisplay = joined ? "inline-block" : "none";
 
@@ -221,7 +221,7 @@ function App() {
         </div>
         <div style={{ marginLeft: "50%" }}>
           <button type="button" id="join-btn" style={{ margin: "2px", display: joinBtnDisplay }} onClick={handleJoinClick}>Join</button>
-          <button type="button" id="leave-btn" style={{ margin: "2px", display: leaveBtnDisplay }}>Leave</button>
+          <button type="button" id="leave-btn" style={{ margin: "2px", display: leaveBtnDisplay }} onClick={handleLeaveClick}>Leave</button>
           <button type="button" id="broadcast-btn" style={{ margin: "2px" }}>Broadcast</button>
           <button type="button" id="receive-btn" style={{ margin: "2px" }}>Receive</button>
           <br />
