@@ -1,71 +1,67 @@
-import { useState, useEffect } from 'react';
-import './App.css';
+import { useEffect, useState } from 'react';
 import { HelloWorldLogic } from './HelloWorldLogic';
 
+import './App.css';
+
 function App() {
-  const app = HelloWorldLogic.getInstance();
+  const [app,setApp] = useState(null);
 
-  app.displayMessage = msg => {
-    const textContainer = document.getElementById("text-container");
-    textContainer.appendChild(document.createTextNode(msg));
-    textContainer.appendChild(document.createElement("br"));
-  };
-
-  app.saveFile = (fileName, data) => {
-    // Prompt the user to download the file.
-    if (prompt(`You've received a file from this channel, do you wish to download ${fileName}?`) === true) {
-      const file = new Blob([data]);
-
-      if (window.navigator.msSaveOrOpenBlob) {
-        // For IE.
-        window.navigator.msSaveOrOpenBlob(file, fileName);
-      } else {
-        // For other browsers.
-        const anchor = document.createElement("a");
-        const url = URL.createObjectURL(file);
-        anchor.href = url;
-        anchor.download = fileName;
-        document.body.appendChild(anchor);
-        anchor.click();
-        setTimeout(() => {
-          document.body.removeChild(anchor);
-          window.URL.revokeObjectURL(url);
-        }, 0);
-      }
-    }
-  };
-
-  // const joinBtn = document.getElementById("join-btn");
-  const leaveBtn = document.getElementById("leave-btn");
   const [joined, setJoined] = useState(false);
 
   const handleJoinClick = () => {
-    // <Start Local Media>
-    //app.startLocalMedia().then(() => {
-    // </Start Local Media>
-    loadInputs(); // Create and register the client.
+    app.startLocalMedia().then(() => {
+      loadInputs();
 
-    app.joinAsync().then(() => {
-      setJoined(true);
-    }); // <Start Local Media>
-    //});
-    // </Start Local Media>
+      app.joinAsync().then(() => {
+        setJoined(true);
+      });
+    });
   };
 
-  const handleLeaveClick = () => {// <Stop Local Media>
-    // app.stopLocalMedia().then(() => {
-    // </Stop Local Media>
-    // <Unregister>             
-    app.leaveAsync().then(() => {
-      clearInputs();
-      setJoined(false);
+  const handleLeaveClick = () => {
+    app.stopLocalMedia().then(() => {         
+      app.leaveAsync().then(() => {
+        clearInputs();
+        setJoined(false);
+      });
     });
-    // </Unregister>
-    // <Stop Local Media>
-    //});
-    // </Stop Local Media>
   };
   
+  useEffect(() => {
+    const appInstance = HelloWorldLogic.getInstance();
+
+    appInstance.displayMessage = msg => {
+        const textContainer = document.getElementById("text-container");
+        textContainer.appendChild(document.createTextNode(msg));
+        textContainer.appendChild(document.createElement("br"));
+      };
+
+    appInstance.saveFile = (fileName, data) => {
+      // Prompt the user to download the file.
+      if (prompt(`You've received a file from this channel, do you wish to download ${fileName}?`) === true) {
+        const file = new Blob([data]);
+
+        if (window.navigator.msSaveOrOpenBlob) {
+          // For IE.
+          window.navigator.msSaveOrOpenBlob(file, fileName);
+        } else {
+          // For other browsers.
+          const anchor = document.createElement("a");
+          const url = URL.createObjectURL(file);
+          anchor.href = url;
+          anchor.download = fileName;
+          document.body.appendChild(anchor);
+          anchor.click();
+          setTimeout(() => {
+            document.body.removeChild(anchor);
+            window.URL.revokeObjectURL(url);
+          }, 0);
+        }
+      }
+    };
+
+    setApp(HelloWorldLogic.getInstance());
+  }, [])
   // <Share Screen>
   //const screenShareToggleBtn: HTMLButtonElement = document.getElementById("screenshare-toggle-btn") as HTMLButtonElement;
   //screenShareToggleBtn.onclick = () => app.toggleScreenSharing();
@@ -123,28 +119,31 @@ function App() {
   //}
   // </broadcast>
   // <Mute Streams>
-  //const muteAudioBtn: HTMLButtonElement = document.getElementById("mute-audio-btn") as HTMLButtonElement;
-  //const muteVideoBtn: HTMLButtonElement = document.getElementById("mute-video-btn") as HTMLButtonElement;
-  //muteAudioBtn.onclick = () => {
-  //    app.toggleMuteLocalAudio().then(() => {
-  //        muteAudioBtn.innerText = (app.localMedia.getAudioMuted()) ? "Unmute Audio" : "Mute Audio";
-  //    });
-  //};
-  //muteVideoBtn.onclick = () => {
-  //    app.toggleMuteLocalVideo().then(() => {
-  //        muteVideoBtn.innerText = (app.localMedia.getVideoMuted()) ? "Unmute Video" : "Mute Video";
-  //    });
-  //};
-  //const disableRemoteAudioBtn: HTMLButtonElement = document.getElementById("disable-remote-audio-btn") as HTMLButtonElement;
-  //const disableRemoteVideoBtn: HTMLButtonElement = document.getElementById("disable-remote-video-btn") as HTMLButtonElement;
-  //disableRemoteAudioBtn.onclick = () => {
-  //    app.toggleDisableRemoteAudio();
-  //    disableRemoteAudioBtn.innerText = (disableRemoteAudioBtn.innerText.indexOf("Disable") !== -1) ? "Enable Remote Audio" : "Disable Remote Audio";
-  //};
-  //disableRemoteVideoBtn.onclick = () => {
-  //    app.toggleDisableRemoteVideo();
-  //    disableRemoteVideoBtn.innerText = (disableRemoteVideoBtn.innerText.indexOf("Disable") !== -1) ? "Enable Remote Video" : "Disable Remote Video";
-  //};
+  let muteButtonText = "Mute Audio";
+  let muteVideoButtonText = "Mute Video";
+
+  handleMute = () => {
+    app.toggleMuteLocalAudio().then(() => {
+      muteButtonText = (app.localMedia.getAudioMuted()) ? "Unmute Audio" : "Mute Audio";
+    });
+  };
+  handleMuteVideo = () => {
+    app.toggleMuteLocalVideo().then(() => {
+      muteVideoButtonText = (app.localMedia.getVideoMuted()) ? "Unmute Video" : "Mute Video";
+    });
+  };
+
+  let disableRemoteAudioBtn = document.getElementById("disable-remote-audio-btn");
+  let disableRemoteVideoBtn = document.getElementById("disable-remote-video-btn");
+
+  disableRemoteAudioBtn.onclick = () => {
+     app.toggleDisableRemoteAudio();
+     disableRemoteAudioBtn.innerText = (disableRemoteAudioBtn.innerText.indexOf("Disable") !== -1) ? "Enable Remote Audio" : "Disable Remote Audio";
+  };
+  disableRemoteVideoBtn.onclick = () => {
+     app.toggleDisableRemoteVideo();
+     disableRemoteVideoBtn.innerText = (disableRemoteVideoBtn.innerText.indexOf("Disable") !== -1) ? "Enable Remote Video" : "Disable Remote Video";
+  };
   // <Mute Streams>
 
 
@@ -213,10 +212,10 @@ function App() {
           <select id="audioOutputs" style={{ margin: "2px" }}>
           </select>
           <br />
-          <button type="button" id="mute-audio-btn" style={{ margin: "2px", marginTop: "10px" }}>Mute Audio</button>
+          <button type="button" id="mute-audio-btn" style={{ margin: "2px", marginTop: "10px" }} onClick={handleMute}>{muteButtonText}</button>
           <button type="button" id="disable-remote-audio-btn" style={{ margin: "2px" }}>Disable Remote Audio</button>
           <br />
-          <button type="button" id="mute-video-btn" style={{ margin: "2px" }}>Mute Video</button>
+          <button type="button" id="mute-video-btn" style={{ margin: "2px" }} onClick={handleMuteVideo}>{muteVideoButtonText}</button>
           <button type="button" id="disable-remote-video-btn" style={{ margin: "2px" }}>Disable Remote Video</button>
         </div>
         <div style={{ marginLeft: "50%" }}>
